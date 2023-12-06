@@ -1,4 +1,4 @@
-# CMM ReadMe
+# Computational Methods and Modelling
 
 This readme provides a concise overview of various numerical methods and analysis techniques for solving mathematical problems commonly encountered in engineering and scientific disciplines.
 
