@@ -2,6 +2,7 @@
 #------------------------------------------------------------------------------
 #                                 Q1 
 print('\n------ Q1. a)------\n')
+#find the 2 real and imaginary roots of w given initial conditions
 import numpy as np
 
 def find_roots(coefficients):
@@ -29,26 +30,29 @@ def find_roots(coefficients):
         # Incrementing i by 1 again to skip the next iteration
         i += 1
 
-# Example usage:
 # Define coefficients of the polynomial in descending order of power of x 
 s = 1500
 c = 12
 coefficients = [1, 2*c, 3*s,  s*c, s**2] 
 
+#call the function
 find_roots(coefficients)
 
 
 print('\n------ Q1. b)------\n')
-
+#calc the smallest possible ammount of work in 10s 
+#using the smallest values from the previous answer
 w_i = 24.0302414149468
 w_r = 0.623019628307849
 t = 10
 A = 0.1
 gamma = np.pi/8
 
+#define the function for displacement
 x = A*np.exp(w_r*t)*np.cos(w_i*t+gamma)
 print ('displacement: ', x)
 
+#find the force using the displacement
 T = 1000
 f = -x * T
 print ('force:', f)
@@ -56,6 +60,7 @@ print ('force:', f)
 #------------------------------------------------------------------------------
 #                                 Q2 
 print('\n------ Q2. a,b)------\n')
+# minimize the the integral and output one var, us ehtat var to find the root
 import numpy as np
 from scipy.optimize import minimize
 from scipy.integrate import quad
@@ -79,6 +84,7 @@ print(f"Optimized Objective Function Value: {result.fun}")
 #------------------------------------------------------------------------------
 #                                 Q3 
 print('\n------ Q3. a)------\n')
+# find the 2 lowest values for the var which satisfy the eq given
 import math
 import numpy as np
 
@@ -113,12 +119,14 @@ def secant(f, a, b, N):
 f = lambda x: np.cosh(x) * np.cos(x) + 1
 
 # Find and print the solution using the Secant method CHANGE
+#boundaries found using desmos or wolfram
 solution1 = secant(f, 1, 2, 1000)
 print('the first root of B is:', solution1)
 
 solution2 = secant(f, 4, 5, 1000)
 print('the second root of B is:', solution2)
 
+#coefficients given in the question
 m = 7850
 L = 0.9
 E = 200 * (10**9)
@@ -126,6 +134,7 @@ I = 3.255 * (10**-11)
 B1 = solution1
 B2 = solution2
 
+# solved for f by manual re-arranging the equation given
 f1 = ((((solution1**4) * E * I) / (m * (L**3)))**0.5) / (2 * np.pi)
 f2 = ((((solution2**4) * E * I) / (m * (L**3)))**0.5) / (2 * np.pi)
 print ('1st solution: ', f1)
@@ -134,6 +143,7 @@ print ('2nd solution: ', f2)
 #------------------------------------------------------------------------------
 #                                 Q4
 print('\n------ Q4------\n')
+# find the smallest radius of the satelite 
 from scipy.optimize import fsolve
 import numpy as np
 import matplotlib.pyplot as plt
@@ -149,7 +159,7 @@ equations = lambda x: [
     ]
 
 # Adjusted initial guess for C, E, and a
-initial_guess = [6800,0.02, 0.2]  # Adjusted E to have a negative sign
+initial_guess = [6800, 0.02, 0.2]  # Adjusted E to have a negative sign
 
 # Solve the system of equations
 constants = fsolve(equations, initial_guess, maxfev=2000, full_output=True)
@@ -159,8 +169,6 @@ C, E, a = constants[0]
 theta = np.radians(30)
 R = C / (1 + E * np.sin(theta + a))
 
-
-
 # Display the results
 print(f"Constant C: {C}")
 print(f"Constant E: {E}")
@@ -168,41 +176,21 @@ print(f"Constant a: {a}")
 
 #Add sicpy optmize (minimize) to find minimum R with these coefficients because its a fucking ellipse
 
-
-
-print(f'At {round(theta, 4)} radians, the Radius is: {round(R, 4) } km')
-
-
-# Define the function for plotting
-def polar_equation_plot(C, E, a, theta):
+# Function to calculate radius for a given angle
+def calculate_radius(theta):
     return C / (1 + E * np.sin(theta + a))
 
+# Finding the minimum radius
+theta_values = np.linspace(-np.pi, np.pi, 1000)
+min_radius_index = np.argmin([calculate_radius(theta) for theta in theta_values])
+min_radius = calculate_radius(theta_values[min_radius_index])
 
-# Generate a range of theta values for plotting
-theta_plot = np.linspace(np.radians(-30), np.radians(30), 100)
-
-# Plot the given polar coordinates as scattered points
-plt.scatter(theta_values, r_values, label='Given Polar Coordinates')
-
-# Plot the equation using the found values as a line
-plt.plot(theta_plot, polar_equation_plot(C, E, a, theta_plot), label='Optimized Function', color='orange')
-
-# Customize x-axis ticks and labels
-xticks = [-30, -15, 0, 15, 30]  # Degrees
-xticklabels = ['-30°', '-15°', '0°', '15°', '30°']
-
-plt.xticks(np.radians(xticks), xticklabels)
-
-plt.title('Given Polar Coordinates and Optimized Function')
-plt.xlabel('Theta (degrees)')
-plt.ylabel('Radius')
-plt.legend()
-plt.grid(True)
-plt.show()
+print(f"The minimum radius R is: {min_radius}")
 
 #------------------------------------------------------------------------------
 #                                 Q4
 print('\n------ Q5------\n')
+#find the value of the 3 angles that minimise PE in the system whilst satisfying the constraints
 
 import numpy as np
 from scipy.optimize import minimize
@@ -260,8 +248,8 @@ print(f"Theta 3: {theta_optimized[2]:.2f} radians")
 #assigning values for theta (so its not an array)
 theta1_opt, theta2_opt, theta3_opt = result.x
 
-PE = Eq6(W1, L1, theta1_opt, W2, L2, theta2_opt) * -1
-print (f'The potential energy of the system is {PE} J')
+PE = Eq6(W1, L1, theta1_opt, W2, L2, theta2_opt) * (-1) # TO MAKE IT NON NEGATIVE
+print(f'The absolute potential energy of the system is {round(abs(PE), 2)} J')
 # Function to calculate positions of joints using simple geometry
 def calculate_positions(theta1, theta2, theta3):
     x1, y1 = 0, 0
@@ -283,4 +271,3 @@ plt.ylabel('Y-axis (meters)')
 plt.legend()
 plt.grid(True)
 plt.show()
-
