@@ -1,13 +1,14 @@
 # December 2018 Past Paper
 #------------------------------------------------------------------------------
 #                                 Q1 
+# optimize for 2 values given initial conditions and one equation
 print('\n------ Q1. a)------\n')
 
 import numpy as np
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
-# Constants
+# Constants given in the eq
 w_cost = 0.7       # $/kg
 d_cost = 0.9       # $/m
 E = 200 * (10**9)  # Pa
@@ -34,7 +35,7 @@ def objective(x):
 # these constraints ensure that the solution satisfies the specified conditions
 constraints = (
     {'type': 'eq', 'fun': lambda x: EqA(pi, E, I(pi, x[0], x[1]), H, x[0], x[1])},  # Equation A replacing d and t for their x
-)
+                )
 
 # Initial guess, around half the range
 initial_guess = [5, 0.5]
@@ -42,7 +43,7 @@ initial_guess = [5, 0.5]
 # Bounds for (d, t) provided by the question
 bounds = [(1, 10), (0.1, 1)]
 
-# Perform optimization to maximize EqA
+# Perform optimization to maximize EqA, -ve minimization = maximization
 result = minimize(objective, initial_guess, bounds=bounds, constraints=constraints)
 
 # Extract the optimal values
@@ -62,10 +63,11 @@ result_stress = minimize(stress_objective, initial_guess, bounds=bounds, constra
 # Extract the values for 80% of maximized buckling stress
 target_d, target_t = result_stress.x
 
-# Calculate cost based on the given parameters
+#create functions to calculate density and volume
 V = lambda R, r, H: pi * (R**2 - r**2) * H
 w = lambda rho, V: rho * V
 
+# Calculate cost based on the given parameters
 R_optimal = (target_d / 2) + target_t
 r_optimal = target_d / 2
 V_optimal = V(R_optimal, r_optimal, H)
@@ -78,9 +80,10 @@ print(f"Optimal cost: ${cost}")
 
 
 print('\n------ Q1. b)------\n')
+# write the taylor series expansion of ln(1+x) for 3 terms
 import sympy as sym
 
-# Define teh vars
+# Define the vars
 x = sym.Symbol('x')
 
 # Define the function y(x)
@@ -91,6 +94,7 @@ taylor = y.series(x, n=3)
 print('taylor series of s(x): ', taylor)
 
 print('\n------ Q1. c)------\n')
+#calculate the value of y for 7 sig. fig when x=0.1
 
 expr = round ( (y.subs({x:0.1})), 7) 
 
@@ -99,6 +103,7 @@ print ('At x=0.1, f(x) = ', expr)
 #------------------------------------------------------------------------------
 #                                 Q2 
 print('\n------ Q2. a)------\n')
+#Prove that C is the general solution to B
 import sympy as sym
 
 # Define the variables
@@ -116,7 +121,7 @@ d2yd2x = sym.diff(dydx, x)
 # Express cosh in terms of sinh
 d2yd2x_sub = d2yd2x.subs(sym.cosh(w / TA * x), sym.sqrt(1 + sym.sinh(w / TA * x)**2))
 
-# Define the right-hand side of Equation B
+# Define the RHS of Equation B
 B = (w / TA) * sym.sqrt(1 + (dydx**2))
 
 # Display the results
@@ -133,14 +138,15 @@ print(B)
 d2yd2x_simp = sym.simplify(d2yd2x_sub)
 B_simp = sym.simplify(B)
 
-# Check if the derivatives are equal to the right-hand side of Equation B
+# Check if the second derrivative of C is equal to the RHS of B
 is_equal = sym.simplify(d2yd2x_simp - B_simp) == 0
 
 print("\nIs Equation C the general solution to Equation B?")
 print(is_equal)
 
-print('\n------ Q2. b)------\n')
 
+print('\n------ Q2. b)------\n')
+#use a root finding techique to calc tension with initial conditions
 import math
 
 def bisection(f, a, b, N):
@@ -171,23 +177,23 @@ def bisection(f, a, b, N):
 
     return (a_n + b_n) / 2
 
-# Variables
+# constants provided in the question
 y = 15
 x = 50
 y0 = 5
 w = 10
 
-#function set to = 0
+#function set to = 0 so we can find the root
 f = lambda TA: (TA / w) * math.cosh((w / TA) * x) + y0 - (TA / w) - y
 
 # Attempt to find the root using the bisection method
-#guesses were found using desmos
+# guesses were found using desmos
 TA = bisection(f, 1250, 1300, 100)
 print("Approximate Tension:", TA)
 
 
 print('\n------ Q2. c)------\n')
-
+# use fixed point iteration to determine the porosity using a given eq
 # Importing math to use sqrt function
 import math
 
@@ -242,6 +248,7 @@ modifiedFixedPointIteration(x0, e, N, scale_factor)
 #------------------------------------------------------------------------------
 #                                 Q3 
 print('\n------ Q3. a)------\n')
+#factorise a second order poly and find the roots
 
 x = sym.Symbol('x')
 y = x**2 + 10*x + 25
@@ -251,6 +258,8 @@ roots = sym.solve(factors, x)
 print ('the roots therefore are x =', roots)
 
 print('\n------ Q3. b)------\n')
+#use poly deflation to find the roots of a 4th order poly
+
 import math
 import numpy as np
 
@@ -284,10 +293,11 @@ def secant(f, a, b, N):
 # Define the function f(x) CHANGE
 f = lambda x: x**4 + 5*(x**3) + 15*(x**2) + 3*x -10
 
+#the number of real solutions was found 1st by using desmos / wolfram and then the boundaries were adjusted
+
 # Find and print the solution using the Secant method CHANGE
 solution1 = secant(f, -2, 0, 1000)
 print('the first root of x is:', solution1)
 
 solution2 = secant(f, 0, 1, 1000)
 print('the second root of x is:', solution2)
-
