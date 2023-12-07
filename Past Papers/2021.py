@@ -2,6 +2,7 @@
 #------------------------------------------------------------------------------
 #                                 Q1 
 print('\n------ Q1. a)------\n')
+#fins the 2 smallest roots of w (real and imaginary) 
 import numpy as np
 
 def find_roots(coefficients):
@@ -39,6 +40,7 @@ find_roots(coefficients)
 
 
 print('\n------ Q1. b)------\n')
+#calc the smallest possible ammount of work using the previous results
 
 w_i = 24.0302414149468
 w_r = 0.623019628307849
@@ -49,6 +51,7 @@ gamma = np.pi/8
 x = A*np.exp(w_r*t)*np.cos(w_i*t+gamma)
 print ('displacement: ', x)
 
+#fidn the force
 T = 1000
 f = -x * T
 print ('force:', f)
@@ -57,6 +60,7 @@ print ('force:', f)
 #------------------------------------------------------------------------------
 #                                 Q2 
 print('\n------ Q2. a)------\n')
+#find the 2 lowest values of f which satisfy the equation provided
 import math
 import numpy as np
 
@@ -112,6 +116,7 @@ print ('2nd solution: ', f2)
 #------------------------------------------------------------------------------
 #                                 Q3 
 print('\n------ Q3------\n')
+#fix the code provided, name the algorithm used, find the root of a cuadratic and find true error
 
 MAX_ITER = 100
 
@@ -149,7 +154,8 @@ print ('percentage error', error)
 #------------------------------------------------------------------------------
 #                                 Q4 
 print('\n------ Q4 ------\n')
-
+# solve an ODE with euler and get solutions at 2pi and 4pi
+# using the exact sol, compute the max ture error in each time range and the diff
 # Function that returns dy/dx
 def model(y, x):
     dydx = -10 * y + (1 - 10) * np.cos(x) - (1 + 10) * np.sin(x)
@@ -188,9 +194,3 @@ for hh in range(len(h_values)):
 
     # Print table row
     print(f"| {h:.3f}   | {error_at_2pi:.6e}  | {error_at_4pi:.6e} |")
-
-
-
-
-
-
