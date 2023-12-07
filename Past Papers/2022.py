@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------
 #                                 Q1 COMPLETED
 print('\n------ Q1. a)------\n')
-
+# evalueate the truncated series with a specified number of terms and find the approximation
 import numpy as np
 
 def calculate_pi_approximation(terms):
@@ -37,12 +37,14 @@ for terms in terms_list:
     print(f"Estimated Error: {error_ext[-1]}")
 #------------------------------------------------------------------------------
 #                                   Q2
-
 import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+print('\n------ Q2. a)------\n')
+#solve the ODE using Euler and report the value of the solutions at various intervals
 
+#define the ODE
 def model(y, t, k):
     dydt = 10*(y**2) - y**3
     return dydt
@@ -93,6 +95,7 @@ def solve_ode(model, t0, y0, t_final, h, method='euler', params=None, plot=True,
 
     return t_eul, y_eul
 
+#plot for better understanding of the function behaviour
 def plot_solution(t_eul, y_eul, method):
     plt.plot(t_eul, y_eul, 'b.-', label=f'Approximate Solution ({method.capitalize()} Method)')
     plt.xlabel('t')
@@ -100,13 +103,12 @@ def plot_solution(t_eul, y_eul, method):
     plt.legend()
     plt.show()
 
-print('\n------ Q2. a)------\n')
-
 # a) Solve Equation Q2.1 with the Euler method and report the values
 t_values = [4, 5, 10]
 initial_condition = 0.02
 h = 0.02  # Adjust the step size as needed
 
+#loop for the different t values
 for t in t_values:
     t_eul, y_eul = solve_ode(model, 0, initial_condition, t, h, 'euler', None, True, False)
     print(f"\nSolution at t = {t}: {y_eul[-1]}")
@@ -117,7 +119,9 @@ print('\n------ Q2. b)------\n')
 initial_conditions = [0.02, 0.01, 0.005]
 ignition_delays = []
 
+# Iterate through different initial conditions
 for initial_condition in initial_conditions:
+    # Solve the ordinary differential equation (ODE) using Euler method
     t_eul, y_eul = solve_ode(model, 0, initial_condition, 10, h, 'euler', None, False, False)
     
     # Find the index where the derivative is maximum
@@ -130,9 +134,12 @@ for initial_condition in initial_conditions:
     # Combine indices to get the overall index
     overall_index = index_max_derivative + index_sudden_increase
     
+    # Calculate ignition delay using the time at the overall index
     ignition_delay = t_eul[overall_index]
     
+    # Store the calculated ignition delay in a list
     ignition_delays.append(ignition_delay)
+
 
 for i in range(len(initial_conditions)):
     print(f"\nIgnition Delay for initial condition {initial_conditions[i]}: {ignition_delays[i]}")
@@ -200,6 +207,7 @@ In summary, stability considerations play a crucial role in choosing the step si
 #                                       Q3
 
 print('\n------ Q3. a)------\n')
+# use root finding to determine any value of x in the domain
 import numpy as np
 
 #part a) find where f(x) = x
@@ -217,7 +225,7 @@ def inverse_quadratic_interpolation(f, x0, x1, x2, N=1000, tolerance=1e-3):
         steps_taken += 1
     return x0, steps_taken
 
-# Define the function f(x)
+# Define the function f(x) = 0 so we can use root finding
 f = lambda x: (1/np.sin(x)) + (1/4) - x
 
 # Set the initial guesses
@@ -229,7 +237,7 @@ print("Approximate root using Inverse Quadriatic Interpolation:", roots_inv_quad
 print("Number of steps needed:", steps)
 
 print('\n------ Q3. b)------\n')
-#part b)
+#part b) find the roots by making f(x) = 0 
 def bisection(f, a, b, N):
 
     if f(a) * f(b) >= 0:
@@ -267,6 +275,7 @@ print("Approximate root using bisection:", roots_bis)
 
 
 print('\n------ Q3. c)------\n')
+#use open root finding technique
 import numpy as np
 
 def secant(f, a, b, N):
@@ -331,6 +340,7 @@ print(df)
 #------------------------------------------------------------------------------
 #                                        Q4
 print('\n------ Q4. a)------\n')
+#show that x is the general solution to s
 import sympy as sym
 
 # Define some symbols
@@ -361,12 +371,14 @@ print('s(x) simplified:  ', s_simp)
 
 
 print('\n------ Q4. b)------\n')
+#find the eq of ins freq and compare it to given eq
 quad = sym.Eq((-b**2 + 4*k*m - 4*m**2*w**2), 0)
 inst_freq = sym.solve(quad, w)
 print ('w is:', inst_freq)
 
 
 print('\n------ Q4. c)------\n')
+# calculate the time taken for a pendulum mass to reach an amplitude of 1% the intial value
 import numpy as np
 import scipy.optimize as opt
 
@@ -386,6 +398,7 @@ root = opt.fsolve(f_numeric, initial_guess)[0]
 print('First positive real solution for time (t):', root)
 
 print('\n------ Q4. d)------\n')
+#find the damping coefficient required to half the time obtained in the part before
 
 # Substitute values into the expression this time t/2 and b is unknown
 expr_2 = x.subs({A: 0.05, m: 1, t: root/2, w: sym.sqrt(5**2 - (0.1/(2*1))**2), gamma: 0}) - Amp
