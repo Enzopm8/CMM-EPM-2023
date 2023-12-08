@@ -95,6 +95,81 @@ print("Approximate Tension:", TA)
 # solve the non-linear systems and linear systems
 # report the sol for theta and w at t: 10, 20 ,30 for both cases
 # inital cond: t = 0, w0 = 0 and theta0 = pi/4
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Constants
+g = 9.81  # acceleration due to gravity (m/s^2)
+l = 9.81  # length of the pendulum (m)
+h = 0.001  # time step for Euler method (s)
+t_max = 30  # maximum time (s)
+initial_conditions = {'theta': np.pi / 4, 'omega': 0}
+
+# Function to compute derivatives for the non-linear system
+def derivatives_nonlinear(theta, omega):
+    dtheta_dt = omega
+    domega_dt = -g / l * np.sin(theta)
+    return dtheta_dt, domega_dt
+
+# Function to compute derivatives for the linearized system
+def derivatives_linear(theta, omega):
+    dtheta_dt = omega
+    domega_dt = -g / l * theta
+    return dtheta_dt, domega_dt
+
+# Function to solve the system using the Euler method
+def solve_system(derivatives, initial_conditions):
+    t_values = np.arange(0, t_max + h, h)
+    theta_values = np.zeros_like(t_values)
+    omega_values = np.zeros_like(t_values)
+
+    # Set initial conditions
+    theta_values[0] = initial_conditions['theta']
+    omega_values[0] = initial_conditions['omega']
+
+    # Euler method
+    for i in range(1, len(t_values)):
+        dtheta_dt, domega_dt = derivatives(theta_values[i - 1], omega_values[i - 1])
+        theta_values[i] = theta_values[i - 1] + h * dtheta_dt
+        omega_values[i] = omega_values[i - 1] + h * domega_dt
+
+    return t_values, theta_values, omega_values
+
+# Solve the non-linear system
+t_values_nonlinear, theta_values_nonlinear, omega_values_nonlinear = solve_system(
+    derivatives_nonlinear, initial_conditions
+)
+
+# Solve the linearized system
+t_values_linear, theta_values_linear, omega_values_linear = solve_system(
+    derivatives_linear, initial_conditions
+)
+
+# Report values at specified times
+time_points = [10, 20, 30]
+
+for time_point in time_points:
+    index_nonlinear = int(time_point / h)
+    index_linear = int(time_point / h)
+
+    print(f"At t = {time_point} seconds:")
+    print("Non-linear system:")
+    print(f"Theta: {theta_values_nonlinear[index_nonlinear]:.4f}")
+    print(f"Omega: {omega_values_nonlinear[index_nonlinear]:.4f}\n")
+
+    print("Linearized system:")
+    print(f"Theta: {theta_values_linear[index_linear]:.4f}")
+    print(f"Omega: {omega_values_linear[index_linear]:.4f}\n")
+
+# Plot the results
+plt.figure(figsize=(12, 6))
+plt.plot(t_values_nonlinear, theta_values_nonlinear, label="Non-linear system")
+plt.plot(t_values_linear, theta_values_linear, label="Linearized system")
+plt.title("Pendulum Motion: Non-linear vs Linearized")
+plt.xlabel("Time (seconds)")
+plt.ylabel("Theta (radians)")
+plt.legend()
+plt.show()
 
 #------------------------------------------------------------------------------
 #                                 Q3 
