@@ -285,28 +285,47 @@ print(f"The distance traveled by the rocket is: {numerical_integration_result:.2
 #------------------------------------------------------------------------------
 #                                 Q5 
 #find the slope of the tank s that will double the time it takes to drain the water
-print('\n------ Q4 ------\n')                                                                                                
+print('\n------ Q5 ------\n')    
+                                                                                            
+import numpy as np
+from scipy.integrate import quad
+from scipy.optimize import fsolve
+
+# Constants
+A_orifice = 0.01  # Area of the orifice in m^2
+h_initial = 1  # Initial height of the water in the tank
+b_base = 1  # Base radius of the cylindrical tank
+g = 9.81  # Acceleration due to gravity in m/s^2
+
+# Calculate the flow rate using Torricelli's law
+Q = A_orifice * np.sqrt(2 * g * h_initial)
+print('The flow rate is', Q)
+
+# Function for the integrand of the cylindrical tank
+def integrand_cylinder(x):
+    return (np.pi * b_base**2) / (A_orifice * np.sqrt(2 * g * x))
+
+# Perform the integration for the cylindrical tank
+integral_result_cylinder, error_cylinder = quad(integrand_cylinder, 0, h_initial)
+print('Time to drain the cylindrical tank:', integral_result_cylinder)
 
 
-import sympy as sp
+# Function for the integrand of the conical tank
+def integrand_conical(x, s):
+    return (np.pi * (b_base + s * x)**2) / (A_orifice * np.sqrt(2 * g * x))
 
-s, b, h, A, g, V = sp.symbols('s b h A g V')
+# Function to calculate the time to drain the conical tank args it to let the code know that s is only a constant and not to be integrated w.r.t
+def time_to_drain_conical(h, s):
+    return quad(integrand_conical, 0, h, args=(s))[0]
 
-# given values in m
-h = 1       # height of water in m
-w = 2        #width of tank in m
-A = 0.01    # Area of drainage slot in m^2
-z = 1.5     # height of tank in m
-b = w/2     # half width of tank used for R
-g = 9.8     # gravity in m/s
+# Function to find the slope s that doubles the time to drain the tank
+def find_slope(s):
+    return time_to_drain_conical(h_initial, s) - 2 * integral_result_cylinder
 
-V_cyl = sp.pi * (b**2) * h
-V_cone = sp.pi * (b + s * h)**2 * h 
+# Initial guess for the slope s
+initial_guess = 0.1
+# Solve for s
+s_solution = fsolve(find_slope, initial_guess)
 
-t_cyl = V_cyl / ( sp.sqrt(2 * g * h) )
-t_cone = V_cone / ( sp.sqrt(2 * g * h) )
-
-Eq = sp.Eq(t_cone, 2*t_cyl )
-solution = sp.solve(Eq, s)
-pos_sol = [sol.evalf() for sol in solution if sol.evalf() > 0 ]
-print('slope of tank side in m: ', pos_sol)
+# Output the solution for s
+print ('value of s: ', s_solution)
